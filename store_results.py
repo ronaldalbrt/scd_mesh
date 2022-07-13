@@ -9,7 +9,7 @@ from pathlib import Path
 def main():
     Path("result").mkdir(parents=False, exist_ok=True)
 
-    rcm = 50
+    rcm = 13
     num_final_solutions = 100
     num_runs = 30
 

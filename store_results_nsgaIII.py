@@ -7,7 +7,7 @@ from pathlib import Path
 
 def main():
     Path("result").mkdir(parents=False, exist_ok=True)
-    rcm = 43
+    rcm = 50
 
     objectives_dim = 3
     otimizations_type = [False] * objectives_dim

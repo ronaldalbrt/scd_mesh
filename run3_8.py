@@ -10,16 +10,16 @@ def main():
     Path("result").mkdir(parents=False, exist_ok=True)
 
     num_runs = 30
-    rcm = 24
+    rcm = 13
     rcm_func = lambda x: RCM(x, rcm)
 
     objectives_dim = 3
-    otimizations_type = [False,False]
+    otimizations_type = [False,False, False]
     max_iterations = 0
-    max_fitness_eval = 15000
-    position_dim = 9
-    position_max_value = [10, 200, 100, 200, 2000000, 600, 600, 600, 900]
-    position_min_value = [0, 0, 0, 0, 1000, 0, 100, 100, 100]
+    max_fitness_eval = 2.6250 * 10**4
+    position_dim = 7
+    position_max_value = [3.6, 0.8, 28, 8.3, 8.3, 3.9, 5.5]
+    position_min_value = [2.6, 0.7, 17, 7.3, 7.3, 2.9, 5]
     population_size = 100
     memory_size = 100
     memory_update_type = 0

@@ -30,13 +30,13 @@ def main():
     Path("result").mkdir(parents=False, exist_ok=True)
     
     num_runs = 30
-    rcm = 43
+    rcm = 50
     rcm_func = lambda x: RCM(x, rcm)
 
     objectives_dim = 2
-    position_dim = 34
-    position_max_value = np.array([1] * position_dim)
-    position_min_value = np.array([0] * position_dim)
+    position_dim = 6
+    position_max_value = [40] * position_dim
+    position_min_value = [8] * position_dim
     population_size = 100
     n_partitions = 12
 
