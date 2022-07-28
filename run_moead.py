@@ -1,4 +1,4 @@
-from pymoo.algorithms.moo.nsga3 import NSGA3
+from pymoo.algorithms.moo.moead import MOEAD, ParallelMOEAD
 from pymoo.factory import get_problem, get_reference_directions
 from pymoo.optimize import minimize
 import numpy as np
@@ -51,13 +51,13 @@ def main():
         num_final_solutions = 50
         n_partitions = 12
 
-        print(f"Running NSGA3 on {optimizationMap[func_n]}")
+        print(f"Running MOEA/D on {optimizationMap[func_n]}")
 
         result = {}
         combined = None
         for i in tqdm(range(num_runs)):
             ref_dirs = get_reference_directions("das-dennis", objectives_dim, n_partitions=n_partitions)
-            nsga3 = NSGA3(pop_size=population_size, ref_dirs=ref_dirs)
+            nsga3 = MOEAD(ref_dirs=ref_dirs)
 
             res = minimize(get_problem(optimizationMap[func_n], n_var=position_dim, n_obj=objectives_dim), nsga3, seed=1, termination=('n_gen', 600))
 
@@ -76,7 +76,7 @@ def main():
         best_idx = pg.sort_population_mo(points = combined)[:n]
         result['combined'] = (best_idx, combined[best_idx])
 
-        with open(f'result/NSGA3_{optimizationMap[func_n]}_{objectives_dim}obj.pkl', 'wb') as f:
+        with open(f'result/MOEAD_{optimizationMap[func_n]}_{objectives_dim}obj.pkl', 'wb') as f:
             pickle.dump(result, f)
 
 if __name__ == '__main__':

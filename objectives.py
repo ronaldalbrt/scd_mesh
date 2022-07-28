@@ -52,22 +52,94 @@ def get_function(number, n_dim = 3):
         return lambda x: DTLZ7(x, n_dim)
     if number == 11:
         return ZDT1
-    if number == 21:
+    if number == 12:
         return ZDT2
-    if number == 31:
+    if number == 13:
         return ZDT3
-    if number == 41:
+    if number == 14:
         return ZDT4
-    if number == 51:
+    if number == 15:
         return ZDT5
-    if number == 61:
+    if number == 16:
         return ZDT6
+    if number == 21:
+        return lambda x: WFG1(x, n_dim)
+    if number == 22:
+        return lambda x: WFG2(x, n_dim)
+    if number == 23:
+        return lambda x: WFG3(x, n_dim)
+    if number == 24:
+        return lambda x: WFG4(x, n_dim)
+    if number == 25:
+        return lambda x: WFG5(x, n_dim)
+    if number == 26:
+        return lambda x: WFG6(x, n_dim)
+    if number == 27:
+        return lambda x: WFG7(x, n_dim)
+    if number == 28:
+        return lambda x: WFG8(x, n_dim)
+    if number == 29:
+        return lambda x: WFG9(x, n_dim)
     return None
 
 def rastrigin(x):
     sum_func = np.vectorize(lambda x: (x - .5)**2 - np.cos(20*np.pi*(x - .5)))
 
     return 100*(np.linalg.norm(x) + np.sum(sum_func(x)))
+
+def WFG1(x, n_dim = 2):
+    np_x = np.array(x)
+    x_dim = np_x.shape[0]
+    
+    return get_problem("wfg1", n_var=x_dim, n_obj=n_dim).evaluate(np_x)
+
+def WFG2(x, n_dim = 2):
+    np_x = np.array(x)
+    x_dim = np_x.shape[0]
+    
+    return get_problem("wfg2", n_var=x_dim, n_obj=n_dim).evaluate(np_x)
+
+def WFG3(x, n_dim = 2):
+    np_x = np.array(x)
+    x_dim = np_x.shape[0]
+    
+    return get_problem("wfg3", n_var=x_dim, n_obj=n_dim).evaluate(np_x)
+
+def WFG4(x, n_dim = 2):
+    np_x = np.array(x)
+    x_dim = np_x.shape[0]
+    
+    return get_problem("wfg4", n_var=x_dim, n_obj=n_dim).evaluate(np_x)
+
+def WFG5(x, n_dim = 2):
+    np_x = np.array(x)
+    x_dim = np_x.shape[0]
+    
+    return get_problem("wfg5", n_var=x_dim, n_obj=n_dim).evaluate(np_x)
+
+def WFG6(x, n_dim = 2):
+    np_x = np.array(x)
+    x_dim = np_x.shape[0]
+    
+    return get_problem("wfg6", n_var=x_dim, n_obj=n_dim).evaluate(np_x)
+
+def WFG7(x, n_dim = 2):
+    np_x = np.array(x)
+    x_dim = np_x.shape[0]
+    
+    return get_problem("wfg7", n_var=x_dim, n_obj=n_dim).evaluate(np_x)
+
+def WFG8(x, n_dim = 2):
+    np_x = np.array(x)
+    x_dim = np_x.shape[0]
+    
+    return get_problem("wfg8", n_var=x_dim, n_obj=n_dim).evaluate(np_x)
+
+def WFG9(x, n_dim = 2):
+    np_x = np.array(x)
+    x_dim = np_x.shape[0]
+    
+    return get_problem("wfg9", n_var=x_dim, n_obj=n_dim).evaluate(np_x)
 
 def DTLZ1(x, n_dim = 2):
     

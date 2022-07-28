@@ -50,26 +50,35 @@ optimizationMap = {
     6: 'DTLZ6',
     7: 'DTLZ7',
     11: 'ZDT1',
-    21: 'ZDT2',
-    31: 'ZDT3',
-    41: 'ZDT4',
-    51: 'ZDT5',
-    61: 'ZDT6'
+    12: 'ZDT2',
+    13: 'ZDT3',
+    14: 'ZDT4',
+    15: 'ZDT5',
+    16: 'ZDT6',
+    21: 'WFG1',
+    22: 'WFG2',
+    23: 'WFG3',
+    24: 'WFG4',
+    25: 'WFG5',
+    26: 'WFG6',
+    27: 'WFG7',
+    28: 'WFG8',
+    29: 'WFG9'
 }
 
 def main():
     Path("result").mkdir(parents=False, exist_ok=True)
     
-    for func_n in [1,2, 3, 5, 6, 7]:
+    for func_n in [21, 22, 23, 24, 25, 26, 27, 28, 29]:
         num_runs = 30
-        objectives_dim = 2
+        objectives_dim = 3
         
         func = get_function(func_n, objectives_dim)
 
         otimizations_type = [False] * objectives_dim
         max_iterations = 0
         max_fitness_eval = 15000
-        position_dim = 5
+        position_dim = 10
         position_max_value = [1] * position_dim
         position_min_value = [0] * position_dim
         population_size = 100
