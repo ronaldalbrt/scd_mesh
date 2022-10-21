@@ -69,7 +69,7 @@ optimizationMap = {
 def main():
     Path("result").mkdir(parents=False, exist_ok=True)
     
-    for func_n in [21, 22, 23, 24, 25, 26, 27, 28, 29]:
+    for func_n in [11, 12, 13, 14, 15, 16]:
         num_runs = 30
         objectives_dim = 3
         
@@ -96,7 +96,7 @@ def main():
         
         config = f"E{global_best_attribution_type + 1}V{Xr_pool_type + 1}D{DE_mutation_type + 1}"
         
-        print(f"Running E{global_best_attribution_type+1}V{Xr_pool_type+1}D{DE_mutation_type+1} on {optimizationMap[func_n]}")
+        print(f"Running E{global_best_attribution_type+1}V{Xr_pool_type+1}D{DE_mutation_type+1}C1 on {optimizationMap[func_n]}")
 
         result = {}
         combined = None
@@ -105,7 +105,7 @@ def main():
             params = MESH_Params(objectives_dim,otimizations_type,max_iterations,max_fitness_eval,position_dim,position_max_value,position_min_value,population_size,memory_size,memory_update_type,global_best_attribution_type,DE_mutation_type,Xr_pool_type,communication_probability,mutation_rate,personal_guide_array_size)
 
             MCDEEPSO = MESH(params,func)
-            MCDEEPSO.log_memory = f"result/{config}_{i}-{optimizationMap[func_n]}-{objectives_dim}obj-"
+            MCDEEPSO.log_memory = f"result/{config}C1_{i}-{optimizationMap[func_n]}-{objectives_dim}obj-"
             MCDEEPSO.run()
             
             F = open(MCDEEPSO.log_memory+"fit.txt", 'r').read().split("\n")[-2]
@@ -127,7 +127,7 @@ def main():
         best_idx = pg.sort_population_mo(points = combined)[:n]
         result['combined'] = (best_idx, combined[best_idx])
 
-        with open(f'result/{config}_{optimizationMap[func_n]}_{objectives_dim}obj.pkl', 'wb') as f:
+        with open(f'result/{config}C1_{optimizationMap[func_n]}_{objectives_dim}obj.pkl', 'wb') as f:
             pickle.dump(result, f)
 
 if __name__ == '__main__':
