@@ -69,7 +69,7 @@ optimizationMap = {
 def main():
     Path("result").mkdir(parents=False, exist_ok=True)
     
-    for func_n in [11, 12, 13, 14, 15, 16]:
+    for func_n in [21, 22, 23, 24, 25, 26, 27, 28, 29]:
         num_runs = 30
         objectives_dim = 3
         
@@ -93,7 +93,7 @@ def main():
         global_best_attribution_type= 1     # 0 -> E1 | 1 -> E2 | 2 -> E3 | 3 -> E4
         Xr_pool_type = 1                  # 0 ->  V1 | 1 -> V2 | 2 -> V3
         DE_mutation_type = 0        # 0 -> DE\rand\1\Bin | 1 -> DE\rand\2\Bin | 2 -> DE/Best/1/Bin | 3 -> DE/Current-to-best/1/Bin | 4 -> DE/Current-to-rand/1/Bin
-        crowd_distance_type = 0     # 0 -> Crowding Distance Tradicional | 1 -> Crowding Distance Suganthan
+        crowd_distance_type = 1     # 0 -> Crowding Distance Tradicional | 1 -> Crowding Distance Suganthan
 
 
         config = f"E{global_best_attribution_type + 1}V{Xr_pool_type + 1}D{DE_mutation_type + 1}"
@@ -104,8 +104,7 @@ def main():
         combined = None
         for i in tqdm(range(num_runs)):
 
-            params = MESH_Params(objectives_dim,otimizations_type,max_iterations,max_fitness_eval,position_dim,position_max_value,position_min_value,population_size,memory_size,memory_update_type,global_best_attribution_type,DE_mutation_type,Xr_pool_type, crowd_distance_type,communication_probability,mutation_rate,personal_guide_array_size)
-
+            params = MESH_Params(objectives_dim,otimizations_type,max_iterations,max_fitness_eval,position_dim,position_max_value,position_min_value,population_size,memory_size,memory_update_type,global_best_attribution_type,DE_mutation_type,Xr_pool_type,crowd_distance_type,communication_probability,mutation_rate,personal_guide_array_size)
             MCDEEPSO = MESH(params,func)
             MCDEEPSO.log_memory = f"result/{config}C1_{i}-{optimizationMap[func_n]}-{objectives_dim}obj-"
             MCDEEPSO.run()

@@ -1,3 +1,9 @@
+from pymoo.algorithms.moo.moead import MOEAD
+from pymoo.algorithms.moo.nsga2 import NSGA2
+from pymoo.algorithms.moo.nsga3 import NSGA3
+from pymoo.factory import get_reference_directions
+from pymoo.optimize import minimize
+from pymoo.core.problem import Problem
 import datetime
 import pickle
 import time
@@ -6,47 +12,42 @@ from MESH import *
 from tqdm import tqdm
 import pygmo as pg
 
+class Cascata(Problem):
+    def __init__(self, position_dim, objectives_dim, position_min_value, position_max_value, state):
+        super().__init__(n_var=position_dim, n_obj=objectives_dim, xl=position_min_value, xu=position_max_value)
+        self.state = state
+
+    def _evaluate(self, x, out, *args, **kwargs):
+        cascata_problem = lambda p: cascata([p] + self.state)[0]
+        result = np.apply_along_axis(cascata_problem, 1, x)
+        out["F"] = result
+
 num_runs = 30
 objectives_dim = 3
-otimizations_type = [False,False,False]
-max_iterations = 0
 max_fitness_eval = 15000
+position_min_value = 70
+position_max_value = 140
 position_dim = 14
-position_max_value = [140] * 14
-position_min_value = [70] * 14
-population_size = 50
-memory_size = 50
-memory_update_type = 0
-communication_probability = 1.1
-mutation_rate = 0.8
-personal_guide_array_size = 3
-num_final_solutions = 100
+population_size = 100
+num_final_solutions = 50
+n_partitions = 12
+
 
 sys.argv.append("a")
 sys.argv.append("1")
 sys.argv.append("23")
 
 if int(sys.argv[2]) == 0:
-    global_best_attribution_type = 0  # G
-    Xr_pool_type = 0  # V
-    DE_mutation_type = 0  # M
-    crowd_distance_type = 0             #C
-    config = "G0V0M0"
-    config_dir = "E1V1D1"
+    algo = NSGA2(pop_size=population_size)
+    config_dir = "NSGA2"
 elif int(sys.argv[2]) == 1:
-    global_best_attribution_type = 1 #G
-    Xr_pool_type = 1                 #V
-    DE_mutation_type = 0             #M
-    crowd_distance_type = 0             #C
-    config = "G1V1M0"
-    config_dir = "E2V2D1"
+    ref_dirs = get_reference_directions("das-dennis", objectives_dim, n_partitions=n_partitions)
+    algo = NSGA3(pop_size=population_size, ref_dirs=ref_dirs)
+    config_dir = "NSGA3"
 elif int(sys.argv[2]) == 2:
-    global_best_attribution_type = 1 #G
-    Xr_pool_type = 1                 #V
-    DE_mutation_type = 0             #M
-    crowd_distance_type = 1             #C
-    config = "G1V1M0"
-    config_dir = "E2V2D1C1"
+    ref_dirs = get_reference_directions("das-dennis", objectives_dim, n_partitions=n_partitions)
+    algo = MOEAD(ref_dirs=ref_dirs)
+    config_dir = "MOEAD"
 
 
 for hora in tqdm(range(0, 24)):
@@ -99,23 +100,19 @@ for hora in tqdm(range(0, 24)):
     result = {}
     combined = None
     for i in tqdm(range(num_runs)):
-        params = MESH_Params(objectives_dim,otimizations_type,max_iterations,max_fitness_eval,position_dim,position_max_value,position_min_value,population_size,memory_size,memory_update_type,global_best_attribution_type,DE_mutation_type,Xr_pool_type, crowd_distance_type,communication_probability,mutation_rate,personal_guide_array_size,True,curr_state)
-        MCDEEPSO = MESH(params,cascata)
-        MCDEEPSO.log_memory = "result/intermediate_results/"+config_dir+"-Cascata_"+str(hora)+"_"
-        MCDEEPSO.run()
-        
-        F = open(MCDEEPSO.log_memory+"fit.txt", 'r').read().split("\n")[-2]
-        F = np.array([v.split() for v in F.split(",")], dtype=np.float64)
+        res = minimize(Cascata(position_dim,objectives_dim, position_min_value, position_max_value,curr_state), algo, termination=('n_eval', max_fitness_eval))
 
-        P = open(MCDEEPSO.log_memory+"pos.txt", 'r').read().split("\n")[-2]
-        P = np.array([v.split() for v in P.split(",")], dtype=np.float64)
+        get_population = lambda p: p.X
+
+        F = res.F
+        P = [get_population(p) for p in res.pop]
 
         result[i+1] = {"F":F, "P":P}
         if combined is None:
             combined = F
             combined_decision = P
         else:
-            combined = np.vstack((combined, F))
+            combined = np.vstack((combined, res.F))
             combined_decision = np.vstack((combined_decision, P))
 
     ndf, dl, dc, ndr = pg.fast_non_dominated_sorting(points=combined)

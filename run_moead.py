@@ -9,8 +9,6 @@ import pygmo as pg
 import pickle
 from tqdm import tqdm
 from pathlib import Path
-import itertools
-
 optimizationMap = {
     1: 'DTLZ1',
     2: 'DTLZ2',
@@ -39,12 +37,10 @@ optimizationMap = {
 def main():
     Path("result").mkdir(parents=False, exist_ok=True)
     
-    for func_n in [1, 2, 3, 5, 6, 7]:
+    for func_n in [21, 22, 23, 24, 25, 26, 27, 28, 29]:
         num_runs = 30
 
         objectives_dim = 3
-        otimizations_type = [False] * objectives_dim
-        max_iterations = 0
         max_fitness_eval = 15000
         position_dim = 10
         population_size = 100
@@ -57,9 +53,9 @@ def main():
         combined = None
         for i in tqdm(range(num_runs)):
             ref_dirs = get_reference_directions("das-dennis", objectives_dim, n_partitions=n_partitions)
-            nsga3 = MOEAD(ref_dirs=ref_dirs)
+            moead = MOEAD(ref_dirs=ref_dirs)
 
-            res = minimize(get_problem(optimizationMap[func_n], n_var=position_dim, n_obj=objectives_dim), nsga3, seed=1, termination=('n_gen', 600))
+            res = minimize(get_problem(optimizationMap[func_n], n_var=position_dim, n_obj=objectives_dim), moead, termination=('n_eval', max_fitness_eval))
 
             get_population = lambda p: p.X
             

@@ -9,7 +9,6 @@ import pygmo as pg
 import pickle
 from tqdm import tqdm
 from pathlib import Path
-import itertools
 
 optimizationMap = {
     1: 'DTLZ1',
@@ -59,7 +58,7 @@ def main():
             ref_dirs = get_reference_directions("das-dennis", objectives_dim, n_partitions=n_partitions)
             nsga3 = NSGA3(pop_size=population_size, ref_dirs=ref_dirs)
 
-            res = minimize(get_problem(optimizationMap[func_n], n_var=position_dim, n_obj=objectives_dim), nsga3, seed=1, termination=('n_gen', 600))
+            res = minimize(get_problem(optimizationMap[func_n], n_var=position_dim, n_obj=objectives_dim), nsga3, termination=('n_eval', max_fitness_eval))
 
             get_population = lambda p: p.X
             

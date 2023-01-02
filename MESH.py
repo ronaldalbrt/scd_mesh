@@ -54,6 +54,7 @@ class MESH_Params:
                  global_best_attribution_type,
                  DE_mutation_type,
                  Xr_pool_type,
+                 crowd_distance_type,
                  communication_probability,
                  mutation_rate,
                  personal_guide_array_size,
@@ -85,6 +86,7 @@ class MESH_Params:
 
         self.DE_mutation_type = DE_mutation_type
         self.Xr_pool_type = Xr_pool_type
+        self.crowd_distance_type = crowd_distance_type
 
         self.communication_probability = communication_probability
         self.mutation_rate = mutation_rate
@@ -222,7 +224,7 @@ class MESH:
                 if (front[-1].fitness[objective_index] - front[0].fitness[objective_index]) == 0:
                     continue
                 front[p].crowd_distance += (front[p + 1].fitness[objective_index] - front[p - 1].fitness[objective_index]) / (front[-1].fitness[objective_index] - front[0].fitness[objective_index])
-
+                
     def crowd_distance_selection(self, particle_A, particle_B):
         if particle_A.rank < particle_B.rank:
             return particle_A
@@ -711,7 +713,10 @@ class MESH:
                             for p in self.fronts[i]:
                                 next_generation.append(p)
                         else:
-                            self.crowding_distance(self.fronts[i])
+                            if self.params.crowd_distance_type == 0:
+                                self.crowding_distance(self.fronts[i])
+                            else:
+                                self.crowding_distance(self.population)
                             self.fronts[i].sort(key=lambda x: x.crowd_distance)
                             j = len(self.fronts[i])-1
                             while len(next_generation) < self.params.population_size:

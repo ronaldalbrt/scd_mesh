@@ -39,7 +39,7 @@ optimizationMap = {
 def main():
     Path("result").mkdir(parents=False, exist_ok=True)
     
-    for func_n in [1, 2, 3, 5, 6, 7]:
+    for func_n in [21, 22, 23, 24, 25, 26, 27, 28, 29]:
         num_runs = 30
 
         objectives_dim = 3
@@ -56,9 +56,9 @@ def main():
         result = {}
         combined = None
         for i in tqdm(range(num_runs)):
-            nsga3 = NSGA2(pop_size=population_size)
+            nsga2 = NSGA2(pop_size=population_size)
 
-            res = minimize(get_problem(optimizationMap[func_n], n_var=position_dim, n_obj=objectives_dim), nsga3, seed=1, termination=('n_gen', 600))
+            res = minimize(get_problem(optimizationMap[func_n], n_var=position_dim, n_obj=objectives_dim), nsga2, termination=('n_eval', max_fitness_eval))
 
             get_population = lambda p: p.X
             
