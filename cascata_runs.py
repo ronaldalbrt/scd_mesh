@@ -14,11 +14,11 @@ max_fitness_eval = 15000
 position_dim = 14
 position_max_value = [140] * 14
 position_min_value = [70] * 14
-population_size = 50
-memory_size = 50
+population_size = 100
+memory_size = 100
 memory_update_type = 0
-communication_probability = 1.1
-mutation_rate = 0.8
+communication_probability = 1
+mutation_rate = 3
 personal_guide_array_size = 3
 num_final_solutions = 100
 

@@ -38,7 +38,7 @@ optimizationMap = {
 def main():
     Path("result").mkdir(parents=False, exist_ok=True)
     
-    for func_n in [21, 22, 23, 24, 25, 26, 27, 28, 29]:
+    for func_n in [1, 2, 3, 5, 6, 7]:
         num_runs = 30
 
         objectives_dim = 3
