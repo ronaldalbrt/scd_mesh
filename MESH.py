@@ -1,36 +1,3 @@
-###########################################################################
-# Lucas Braga, MS.c. (email: lucas.braga.deo@gmail.com )
-# Gabriel Matos Leite, PhD candidate (email: gmatos@cos.ufrj.br)
-# Carolina Marcelino, PhD (email: carolimarc@ic.ufrj.br)
-# June 16, 2021
-###########################################################################
-# Copyright (c) 2021, Lucas Braga, Gabriel Matos Leite, Carolina Marcelino
-# All rights reserved.
-#
-# Redistribution and use in source and binary forms, with or without
-# modification, are permitted provided that the following conditions are
-# met:
-#
-#    * Redistributions of source code must retain the above copyright
-#      notice, this list of conditions and the following disclaimer.
-#    * Redistributions in binary form must reproduce the above copyright
-#      notice, this list of conditions and the following disclaimer in
-#      the documentation and/or other materials provided with the
-#      distribution
-#
-# THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS USING 
-# THE CREATIVE COMMONS LICENSE: CC BY-NC-ND "AS IS"
-# AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE 
-# IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE
-# ARE DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT OWNER OR CONTRIBUTORS BE
-# LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR
-# CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF
-# SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS
-# INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN
-# CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE)
-# ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
-# POSSIBILITY OF SUCH DAMAGE.
-
 import numpy as np
 import sys
 import copy
@@ -224,7 +191,35 @@ class MESH:
                 if (front[-1].fitness[objective_index] - front[0].fitness[objective_index]) == 0:
                     continue
                 front[p].crowd_distance += (front[p + 1].fitness[objective_index] - front[p - 1].fitness[objective_index]) / (front[-1].fitness[objective_index] - front[0].fitness[objective_index])
-                
+    
+    def special_crowding_distance(self, front):
+        fitness_crowd_distance = []
+        decision_crowd_distance = []
+        k = len(front) - 1
+        for _ in front:
+            fitness_crowd_distance.append(0)
+            decision_crowd_distance.append(0)
+
+        for objective_index in range(self.params.objectives_dim):
+            front.sort(key=lambda x: x.fitness[objective_index])
+            fitness_crowd_distance[0] = sys.maxsize
+            fitness_crowd_distance[-1] = sys.maxsize
+            for p in range(1, k):
+                if(fitness_crowd_distance[p] == sys.maxsize):
+                    continue
+                if (front[-1].fitness[objective_index] - front[0].fitness[objective_index]) == 0:
+                    continue
+                fitness_crowd_distance[p] += (front[p + 1].fitness[objective_index] - front[p - 1].fitness[objective_index]) / (front[-1].fitness[objective_index] - front[0].fitness[objective_index])
+
+        for p in range(1, k):
+            for j in range(1, k):
+                decision_crowd_distance[p] += (k - j + 1)*np.linalg.norm(np.array(front[p].position) - np.array(front[j].position))
+
+        for p in range(len(front)):
+            if decision_crowd_distance[p] > np.mean(decision_crowd_distance).item() or fitness_crowd_distance[p] > np.mean(fitness_crowd_distance).item():
+                front[p].crowd_distance = max(decision_crowd_distance[p], fitness_crowd_distance[p])
+            else:
+                front[p].crowd_distance = min(decision_crowd_distance[p], fitness_crowd_distance[p])
     def crowd_distance_selection(self, particle_A, particle_B):
         if particle_A.rank < particle_B.rank:
             return particle_A
@@ -716,7 +711,7 @@ class MESH:
                             if self.params.crowd_distance_type == 0:
                                 self.crowding_distance(self.fronts[i])
                             else:
-                                self.crowding_distance(self.population)
+                                self.special_crowding_distance(self.fronts[i])
                             self.fronts[i].sort(key=lambda x: x.crowd_distance)
                             j = len(self.fronts[i])-1
                             while len(next_generation) < self.params.population_size:
